@@ -1,0 +1,37 @@
+[package]
+name = "url-redirect"
+version = "0.1.0"
+edition = "2021"
+authors = ["KizzyCode Software Labs./Keziah Biermann <development@kizzycode.de>"]
+keywords = []
+categories = []
+description = "`url-redirect` is a trivial, headless URL redirection service"
+license = "BSD-2-Clause OR MIT"
+repository = "https://github.com/KizzyCode/UrlRedirect-rust"
+readme = "README.md"
+
+
+[[bin]]
+name = "url-redirect"
+path = "src/main.rs"
+
+
+[badges]
+appveyor = { repository = "KizzyCode/UrlRedirect-rust" }
+
+
+[features]
+default = []
+
+
+[dependencies]
+rouille = { version = "3.6.1", default-features = false }
+serde = { version = "1.0.152", default-features = false, features = ["std", "derive"] }
+toml = { version = "0.5.10", default-features = false }
+
+
+[profile.release]
+overflow-checks = true
+
+[profile.bench]
+overflow-checks = true
