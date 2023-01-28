@@ -7,8 +7,9 @@ mod error;
 mod redirect;
 mod stats;
 
+use ehttpd::Server;
+
 use crate::{config::Config, error::Error};
-use rouille::router;
 use std::process;
 
 pub fn main() {
@@ -18,23 +19,23 @@ pub fn main() {
         db::reload_periodically()?;
         let config = Config::load()?;
 
-        // Start Rouille
-        rouille::start_server(config.server.address, |request| {
-            router!(request,
-                (GET) (/_admin) => {
-                    admin::administer_get(request)
-                },
-                (POST) (/_admin) => {
-                    admin::administer_post(request)
-                },
-                (GET) (/_stats) => {
-                    stats::stats_get(request)
-                },
-                _ => {
-                    redirect::redirect_any(request)
-                }
-            )
-        });
+        // Initialize the server
+        let server: Server = Server::new(
+            &config.server.address,
+            config.server.connection_soft_limit,
+            config.server.connection_hard_limit,
+        )?;
+
+        // Start the server loop
+        server.exec(|request| match (request.method.as_ref(), request.target.as_ref()) {
+            (b"GET", b"/_admin") => admin::administer_get(request),
+            (b"POST", b"/_admin") => admin::administer_post(request),
+            (b"GET", b"/_stats") => stats::stats_get(request),
+            _ => redirect::redirect_any(request),
+        })?;
+
+        // `server.exec` can never successfully return; it's `Ok`-type is literally `Infallible`
+        unreachable!("`server.exec` can never successfully return")
     }
 
     // Execute the fallible code and pretty print any error

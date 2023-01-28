@@ -50,7 +50,7 @@ impl Display for Error {
 
         // Print the source
         if let Some(source) = &self.source {
-            writeln!(f, " caused by: {}", source)?;
+            writeln!(f, " caused by: {source}")?;
         }
         Ok(())
     }

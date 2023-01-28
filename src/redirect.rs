@@ -1,10 +1,16 @@
 //! Implements the URL redirect
 
+use std::str;
+
 use crate::db::DB;
-use rouille::{Request, Response};
+use ehttpd::http::{
+    request::Request,
+    response::Response,
+    responseext::{ResponseBodyExt, ResponseExt},
+};
 
 /// Resolves an URL mapping
-fn lookup(url: &str) -> Option<String> {
+fn lookup_any(url: &str) -> Option<String> {
     // Acquire/recover database lock
     let database = match DB.read() {
         Ok(database) => database,
@@ -17,21 +23,27 @@ fn lookup(url: &str) -> Option<String> {
 
 /// Redirects the URL request
 pub fn redirect_any(request: &Request) -> Response {
-    // Resolve the URL mapping
-    let url = request.url();
-    let Some(target) = lookup(&url) else {
+    // Parse the URL as UTF-8
+    let Ok(url) = str::from_utf8(&request.target) else {
+        eprintln!("invalid redirect key: target is not UTF-8");
+        return Response::new_404_notfound();
+    };
+
+    // Lookup the redirect
+    let Some(target) = lookup_any(url) else {
         eprintln!("invalid redirect key: {url}");
-        return Response::empty_404();
+        return Response::new_404_notfound();
     };
 
     // Don't send any data if the the method is not a GET request
-    if request.method() != "GET" {
-        return Response::redirect_307(target);
+    if !request.method.eq(b"GET") {
+        return Response::new_status_reason(307, "Temporary Redirect");
     }
 
-    // Build redirect response
+    // Build the HTML response to display something to the user in case the 307 is ignored
     let html = format!(
-        r#"<html>
+        r#"
+        <html>
             <head>
                 <title>Redirecting...</title>
             </head>
@@ -41,5 +53,11 @@ pub fn redirect_any(request: &Request) -> Response {
             </body>
         </html>"#
     );
-    Response::html(html).with_status_code(307).with_additional_header("Location", target)
+
+    // Create and return the response
+    let mut response = Response::new_status_reason(307, "Temporary Redirect");
+    response.set_field("Location", target);
+    response.set_field("Content-Type", "text/html");
+    response.set_body_data(html.into_bytes());
+    response
 }

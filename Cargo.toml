@@ -1,6 +1,6 @@
 [package]
 name = "url-redirect"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["KizzyCode Software Labs./Keziah Biermann <development@kizzycode.de>"]
 keywords = []
@@ -25,8 +25,9 @@ default = []
 
 
 [dependencies]
-rouille = { version = "3.6.1", default-features = false }
+ehttpd = { version = "0.1.0", default-features = false }
 serde = { version = "1.0.152", default-features = false, features = ["std", "derive"] }
+serde_json = { version = "1.0.91", default-features = false, features = ["std"] }
 toml = { version = "0.5.10", default-features = false }
 
 

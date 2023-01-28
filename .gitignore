@@ -5,6 +5,10 @@
 /Cargo.lock
 /target
 
+# Ignore testing config and database
+/config.toml
+/url_db.toml
+
 # Ignore some vscode files
 .vscode/*
 !.vscode/*.md
