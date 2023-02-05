@@ -7,10 +7,23 @@ mod error;
 mod redirect;
 mod stats;
 
-use ehttpd::Server;
+use ehttpd::{
+    http::{Request, Response},
+    Server,
+};
 
 use crate::{config::Config, error::Error};
 use std::process;
+
+/// Routes a HTTP request to the associated implementation
+fn request_handler(request: Request) -> Response {
+    match (request.method.as_ref(), request.target.as_ref()) {
+        (b"GET", b"/_admin") => admin::administer_get(&request),
+        (b"POST", b"/_admin") => admin::administer_post(&request),
+        (b"GET", b"/_stats") => stats::stats_get(&request),
+        _ => redirect::redirect_any(&request),
+    }
+}
 
 pub fn main() {
     /// The fallible main function code
@@ -20,22 +33,9 @@ pub fn main() {
         let config = Config::load()?;
 
         // Initialize the server
-        let server: Server = Server::new(
-            &config.server.address,
-            config.server.connection_soft_limit,
-            config.server.connection_hard_limit,
-        )?;
-
-        // Start the server loop
-        server.exec(|request| match (request.method.as_ref(), request.target.as_ref()) {
-            (b"GET", b"/_admin") => admin::administer_get(request),
-            (b"POST", b"/_admin") => admin::administer_post(request),
-            (b"GET", b"/_stats") => stats::stats_get(request),
-            _ => redirect::redirect_any(request),
-        })?;
-
-        // `server.exec` can never successfully return; it's `Ok`-type is literally `Infallible`
-        unreachable!("`server.exec` can never successfully return")
+        let server: Server = Server::new(config.server.connection_limit, request_handler);
+        server.accept(&config.server.address)?;
+        unreachable!("`server.accept` can never exit gracefully")
     }
 
     // Execute the fallible code and pretty print any error

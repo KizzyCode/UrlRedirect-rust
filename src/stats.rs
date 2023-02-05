@@ -1,9 +1,8 @@
 //! Implements a simple stats API
 
-use ehttpd::http::{
-    request::Request,
-    response::Response,
-    responseext::{ResponseBodyExt, ResponseExt},
+use ehttpd::{
+    bytes::Source,
+    http::{Request, Response, ResponseExt},
 };
 use serde::Serialize;
 
@@ -30,6 +29,6 @@ pub fn stats_get(_request: &Request) -> Response {
     // Create the response
     let mut response = Response::new_200_ok();
     response.set_field("Content-Type", "application/json");
-    response.set_body_data(stats_raw.into_bytes());
+    response.set_body(Source::from(stats_raw)).expect("failed to set string as request body");
     response
 }

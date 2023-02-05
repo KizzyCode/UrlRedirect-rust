@@ -9,20 +9,13 @@ use std::{borrow::Cow, env, ops::Deref};
 pub struct ServerConfig {
     /// The IP address and port to listen on
     pub address: String,
-    /// The connection soft limit; i.e. the amount of threads to retain permanently to process incoming connections
-    #[serde(default = "ServerConfig::connection_soft_limit_default")]
-    pub connection_soft_limit: usize,
     /// The connection hart limit; i.e. the amount of threads to spawn at max to process incoming connections
-    #[serde(default = "ServerConfig::connection_hard_limit_default")]
-    pub connection_hard_limit: usize,
+    #[serde(default = "ServerConfig::connection_limit_default")]
+    pub connection_limit: usize,
 }
 impl ServerConfig {
-    /// The default value for the connection soft limit
-    const fn connection_soft_limit_default() -> usize {
-        64
-    }
     /// The default value for the connection hard limit
-    const fn connection_hard_limit_default() -> usize {
+    const fn connection_limit_default() -> usize {
         2048
     }
 }
