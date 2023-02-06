@@ -7,12 +7,11 @@ mod error;
 mod redirect;
 mod stats;
 
+use crate::{config::Config, error::Error};
 use ehttpd::{
     http::{Request, Response},
     Server,
 };
-
-use crate::{config::Config, error::Error};
 use std::process;
 
 /// Routes a HTTP request to the associated implementation
