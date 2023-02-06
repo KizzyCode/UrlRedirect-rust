@@ -1,9 +1,6 @@
 //! Implements a simple stats API
 
-use ehttpd::{
-    bytes::Source,
-    http::{Request, Response, ResponseExt},
-};
+use ehttpd::http::{Request, Response, ResponseExt};
 use serde::Serialize;
 
 /// The possible status values
@@ -24,11 +21,11 @@ struct Stats {
 pub fn stats_get(_request: &Request) -> Response {
     // Serialize the stats
     let stats = Stats { status: Status::Online };
-    let stats_raw = serde_json::to_string_pretty(&stats).expect("failed to serialize stats");
+    let stats_json = serde_json::to_string_pretty(&stats).expect("failed to serialize stats");
 
     // Create the response
     let mut response = Response::new_200_ok();
     response.set_field("Content-Type", "application/json");
-    response.set_body(Source::from(stats_raw)).expect("failed to set string as request body");
+    response.set_body_data(stats_json);
     response
 }
