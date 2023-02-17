@@ -56,8 +56,7 @@ pub fn redirect_any(request: &Request) -> Response {
     };
 
     // Create the response
-    let mut response = Response::new_status_reason(307, "Temporary Redirect");
-    response.set_field("Location", target.clone());
+    let mut response = Response::new_307_temporaryredirect(target.clone());
     response.set_content_length(0);
     response.set_connection_close();
 
