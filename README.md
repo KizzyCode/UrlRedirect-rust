@@ -20,13 +20,9 @@ environment.
 # The address to listen on
 address = "0.0.0.0:8088"
 
-# The connection soft limit; i.e. the amount of threads to retain permanently to process incoming connections
-# This field is optional, the default value is 64
-#connection_soft_limit = 64
-
 # The connection hart limit; i.e. the amount of threads to spawn at max to process incoming connections
 # This field is optional, the default value is 2048
-#connection_hard_limit = 2048
+#connection_limit = 2048
 ```
 
 ### `db.toml`
@@ -40,4 +36,4 @@ address = "0.0.0.0:8088"
 
 
 ## TODO
- - [ ] Admin-API (always returns 401 for now)
+ - [ ] Admin-API (always returns 403 for now)
