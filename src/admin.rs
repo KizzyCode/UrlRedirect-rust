@@ -11,7 +11,7 @@ fn response_403(request: &Request) -> Response {
     // Append a human readable body if this is a GET-request
     if request.method.eq(b"GET") {
         // Set the body (this also overwrites the `set_content_length(0)` from above)
-        const HTML_TEMPLATE: &str = include_str!("admin.html");
+        const HTML_TEMPLATE: &str = include_str!("admin-403.html");
         response.set_body_data(HTML_TEMPLATE);
     }
     response
