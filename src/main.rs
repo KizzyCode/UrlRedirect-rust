@@ -17,8 +17,8 @@ use std::process;
 /// Routes a HTTP request to the associated implementation
 fn request_handler(request: Request) -> Response {
     match (request.method.as_ref(), request.target.as_ref()) {
-        (b"GET", b"/_admin") => admin::administer_get(&request),
         (b"POST", b"/_admin") => admin::administer_post(&request),
+        (b"GET", b"/_admin") => admin::administer_get(&request),
         (b"GET", b"/_stats") => stats::stats_get(&request),
         _ => redirect::redirect_any(&request),
     }
