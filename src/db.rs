@@ -2,15 +2,13 @@
 
 use crate::error::Error;
 use serde::Deserialize;
-use std::{
-    borrow::Cow,
-    collections::BTreeMap,
-    env,
-    ops::Deref,
-    sync::RwLock,
-    thread::{self, Builder},
-    time::Duration,
-};
+use std::borrow::Cow;
+use std::collections::BTreeMap;
+use std::env;
+use std::ops::Deref;
+use std::sync::RwLock;
+use std::thread::{self, Builder};
+use std::time::Duration;
 
 /// A global database singleton
 pub static DB: RwLock<Db> = RwLock::new(Db::new());

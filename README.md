@@ -33,7 +33,3 @@ address = "0.0.0.0:8088"
 [redirects]
 "/testolope" = "https://example.com"
 ```
-
-
-## TODO
- - [ ] Admin-API (always returns 403 for now)

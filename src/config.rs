@@ -2,7 +2,9 @@
 
 use crate::error::Error;
 use serde::Deserialize;
-use std::{borrow::Cow, env, ops::Deref};
+use std::borrow::Cow;
+use std::env;
+use std::ops::Deref;
 
 /// The server config
 #[derive(Debug, Clone, Deserialize)]

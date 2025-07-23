@@ -13,7 +13,7 @@ fn lookup_any(url: &str) -> Option<String> {
     };
 
     // Resolve entry
-    database.redirects.get(url).map(Clone::clone)
+    database.redirects.get(url).cloned()
 }
 
 /// Creates a 404 response
@@ -21,22 +21,13 @@ fn response_404(request: &Request) -> Response {
     // Create a basic response
     let mut response = Response::new_404_notfound();
     response.set_content_length(0);
+    response.set_connection_close();
 
     // Append a human readable body if this is a GET-request
     if request.method.eq(b"GET") {
-        // Build the HTML response to display something to the user
-        let html = r#"
-            <html>
-                <head>
-                    <title>404 Not Found</title>
-                </head>
-                <body>
-                    The requested resource cannot be found on the server (404 Not Found)
-                </body>
-            </html>"#;
-
         // Set the body (this also overwrites the `set_content_length(0)` from above)
-        response.set_body_data(html);
+        const HTML_TEMPLATE: &str = include_str!("../static/404.html");
+        response.set_body_data(HTML_TEMPLATE);
     }
     response
 }
@@ -63,7 +54,7 @@ pub fn redirect_any(request: &Request) -> Response {
     // Append a human readable body if this is a GET-request
     if request.method.eq(b"GET") {
         // Build the HTML response to display something to the user in case the 307 is ignored
-        const HTML_TEMPLATE: &str = include_str!("redirect.html");
+        const HTML_TEMPLATE: &str = include_str!("../static/redirect.html");
         let html = HTML_TEMPLATE.replace("{target}", &target);
 
         // Set the body (this also overwrites the `set_content_length(0)` from above)

@@ -1,25 +1,21 @@
 #![doc = include_str!("../README.md")]
 
-mod admin;
 mod config;
 mod db;
 mod error;
 mod redirect;
-mod stats;
+mod status;
 
-use crate::{config::Config, error::Error};
-use ehttpd::{
-    http::{Request, Response},
-    Server,
-};
+use crate::config::Config;
+use crate::error::Error;
+use ehttpd::Server;
+use ehttpd::http::{Request, Response};
 use std::process;
 
 /// Routes a HTTP request to the associated implementation
 fn request_handler(request: Request) -> Response {
     match (request.method.as_ref(), request.target.as_ref()) {
-        (b"POST", b"/_admin") => admin::administer_post(&request),
-        (b"GET", b"/_admin") => admin::administer_get(&request),
-        (b"GET", b"/_stats") => stats::stats_get(&request),
+        (b"GET", b"/status") => status::status_get(&request),
         _ => redirect::redirect_any(&request),
     }
 }
@@ -31,8 +27,13 @@ pub fn main() {
         db::reload_periodically()?;
         let config = Config::load()?;
 
-        // Initialize the server
-        let server: Server = Server::new(config.server.connection_limit, request_handler);
+        // Configure the server
+        let server: Server<_> = Server::new(config.server.connection_limit, |source, sink| {
+            // Use a simple request-response handler; we are not interested in the streams
+            ehttpd::reqresp(source, sink, request_handler)
+        });
+
+        // Start the server
         server.accept(&config.server.address)?;
         unreachable!("`server.accept` can never exit gracefully")
     }
