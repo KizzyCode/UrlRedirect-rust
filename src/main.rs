@@ -8,8 +8,8 @@ mod status;
 
 use crate::config::Config;
 use crate::error::Error;
-use ehttpd::Server;
 use ehttpd::http::{Request, Response};
+use ehttpd::Server;
 use std::process;
 
 /// Routes a HTTP request to the associated implementation
@@ -27,13 +27,8 @@ pub fn main() {
         db::reload_periodically()?;
         let config = Config::load()?;
 
-        // Configure the server
-        let server: Server<_> = Server::new(config.server.connection_limit, |source, sink| {
-            // Use a simple request-response handler; we are not interested in the streams
-            ehttpd::reqresp(source, sink, request_handler)
-        });
-
         // Start the server
+        let server = Server::with_request_response(config.server.connection_limit, request_handler);
         server.accept(&config.server.address)?;
         unreachable!("`server.accept` can never exit gracefully")
     }
