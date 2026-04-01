@@ -1,0 +1,15 @@
+services:
+  url-redirect:
+    build: .
+    init: true
+    ports:
+      - 127.0.0.1:8080:8080/tcp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - ./.docker:/etc/urlredirect:ro
+    environment:
+      - CONFIG_FILE=/etc/urlredirect/config.toml
+      - DB_FILE=/etc/urlredirect/db.toml

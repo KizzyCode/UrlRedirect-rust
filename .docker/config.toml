@@ -1,0 +1,7 @@
+[server]
+# The address to listen on
+address = "0.0.0.0:8080"
+
+# The connection hart limit; i.e. the amount of threads to spawn at max to process incoming connections
+# This field is optional, the default value is 2048
+#connection_limit = 2048

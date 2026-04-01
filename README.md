@@ -33,3 +33,22 @@ address = "0.0.0.0:8088"
 [redirects]
 "/testolope" = "https://example.com"
 ```
+
+### Running via Docker Compose
+```yaml
+services:
+  url-redirect:
+    build: .
+    init: true
+    ports:
+      - 8080:8080/tcp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - ./example:/mnt:rw
+    environment:
+      - CONFIG_FILE=/etc/url-redirect/config.toml
+      - DB_FILE=/mnt/db.toml
+```

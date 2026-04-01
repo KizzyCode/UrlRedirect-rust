@@ -1,7 +1,7 @@
 [package]
 name = "url-redirect"
-version = "0.3.1"
-edition = "2021"
+version = "0.4.0"
+edition = "2024"
 authors = ["KizzyCode Software Labs./Keziah Biermann <development@kizzycode.de>"]
 keywords = ["web"]
 categories = ["network-programming", "web-programming", "web-programming::http-server"]
@@ -12,7 +12,7 @@ readme = "README.md"
 
 
 [[bin]]
-name = "url-redirect"
+name = "urlredirect"
 path = "src/main.rs"
 
 
@@ -25,10 +25,10 @@ default = []
 
 
 [dependencies]
-ehttpd = { version = "0.10.0", default-features = false, features = ["server"] }
+ehttpd = { version = "0.13.1", default-features = false, features = ["server"] }
 serde = { version = "1.0.228", default-features = false, features = ["std", "derive"] }
 serde_json = { version = "1.0.145", default-features = false, features = ["std"] }
-toml = { version = "0.9.8", default-features = false, features = ["parse", "serde", "std"] }
+toml = { version = "1.1.1", default-features = false, features = ["parse", "serde", "std"] }
 
 
 [profile.release]

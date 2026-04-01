@@ -1,7 +1,7 @@
 //! Implements the URL redirect
 
 use crate::db::DB;
-use ehttpd::http::{Request, Response, ResponseExt};
+use ehttpd::http::{Request, Response};
 use std::str;
 
 /// Resolves an URL mapping

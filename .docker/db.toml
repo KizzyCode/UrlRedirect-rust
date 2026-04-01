@@ -1,0 +1,6 @@
+# The redirect database
+# Please note: All redirect paths must start with a leading `/`, like in the example
+
+[redirects]
+"/testolope" = "https://example.com"
+"/" = "https://en.wikipedia.org/wiki/Catch-all"

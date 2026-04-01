@@ -1,6 +1,6 @@
 //! Implements a simple status API
 
-use ehttpd::http::{Request, Response, ResponseExt};
+use ehttpd::http::{Request, Response};
 use serde::Serialize;
 
 /// The possible status values
@@ -14,6 +14,7 @@ enum Status {
 pub fn status_get(_request: &Request) -> Response {
     // Serialize the status
     let status = Status::Online;
+    #[allow(clippy::expect_used, reason = "should never happen in practice")]
     let status_json = serde_json::to_string_pretty(&status).expect("failed to serialize stats");
 
     // Create the response
